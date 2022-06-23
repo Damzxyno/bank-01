@@ -1,6 +1,7 @@
 package com.harbinton.paymentservice.service;
 
 import com.harbinton.paymentservice.dtos.requests.TransactionInitializationRequest;
+import com.harbinton.paymentservice.enums.TransactionStatus;
 import com.harbinton.paymentservice.models.Transaction;
 import com.harbinton.paymentservice.repository.CoperateAccountRepository;
 import com.harbinton.paymentservice.repository.TransactionRepository;
@@ -20,7 +21,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -51,19 +51,23 @@ class TransactionServiceImplTest {
 
     @Test
     public void shouldSuccessfullyCreateTransaction(){
-        transactionInitializationRequest = new TransactionInitializationRequest("email@email.com", BigDecimal.valueOf(1000));
+        String secretKey = "Bearer_SILICON-VALLEY";
+
+        transactionInitializationRequest = new TransactionInitializationRequest(BigDecimal.valueOf(1000));
+
+
         String reference = UUID.randomUUID().toString();
+
         Transaction transaction = Transaction.builder()
                 .amount(transactionInitializationRequest.getAmount())
-                .email(transactionInitializationRequest.getEmail())
                 .reference(reference)
-                .status("PENDING")
-                .timeStamp(LocalDateTime.now())
+                .status(TransactionStatus.PENDING)
+                .initiatedDateTime(LocalDateTime.now())
                 .build();
+
         Mockito.when(transactionRepo.save(any())).thenReturn(transaction);
         Mockito.when(servletRequest.getHeader(any())).thenReturn("Bearer iiii");
-        Mockito.when(coperateAccountRepo.existsBySecretKey("iii")).thenReturn(true);
-        transactionService.createTransaction(transactionInitializationRequest);
+        transactionService.initiateTransaction(transactionInitializationRequest);
         verify(transactionRepo).save(any());
     }
 }

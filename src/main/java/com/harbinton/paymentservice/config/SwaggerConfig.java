@@ -24,8 +24,12 @@ import java.util.List;
 public class SwaggerConfig {
 
     private static  final String AUTHORIZATION_HEADER = "Authorization";
+
     private  ApiKey apikey(){
         return  new ApiKey("Secret Key", AUTHORIZATION_HEADER, "header");
+    }
+    private  ApiKey accountNumber(){
+        return  new ApiKey("NUBAN", "NUBAN", "header");
     }
 
     @Bean
@@ -35,8 +39,8 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.harbinton.paymentservice"))
                 .build()
-                .securitySchemes(Arrays.asList(apikey()))
-                .securityContexts(Arrays.asList(securityContext()));
+                .securitySchemes(Arrays.asList(apikey(), accountNumber()))
+                .securityContexts(List.of(securityContext()));
     }
 
 
@@ -44,6 +48,7 @@ public class SwaggerConfig {
     private SecurityContext securityContext(){
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
+                .forPaths(PathSelectors.any())
                 .build();
     }
 
@@ -52,6 +57,8 @@ public class SwaggerConfig {
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
 
-        return List.of(new SecurityReference("Secret Key", authorizationScopes));
+        return Arrays.asList(new SecurityReference("Secret Key", authorizationScopes),
+                new SecurityReference("NUBAN", authorizationScopes)
+                );
     }
 }

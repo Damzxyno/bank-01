@@ -8,9 +8,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonInclude(JsonInclude.Include. NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionInitiationResponse {
         private String status;
         private String message;
         private String reference;
+        private String processingUrl;
 }

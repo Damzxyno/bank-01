@@ -1,7 +1,6 @@
 package com.harbinton.paymentservice.controllers;
 
 import com.harbinton.paymentservice.dtos.requests.TransactionInitializationRequest;
-import com.harbinton.paymentservice.dtos.requests.TransactionVerificationRequest;
 import com.harbinton.paymentservice.dtos.response.TransactionInitiationResponse;
 import com.harbinton.paymentservice.dtos.response.TransactionVerificationResponse;
 import com.harbinton.paymentservice.service.TransactionService;
@@ -11,19 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping
 public class TransactionController {
     private final TransactionService transactionService;
 
-    @PostMapping("/initialize")
+    @PostMapping("/initiate")
     public ResponseEntity<TransactionInitiationResponse>
     initializeTransaction(@RequestBody TransactionInitializationRequest request) {
-        return transactionService.createTransaction(request);
+        return transactionService.initiateTransaction(request);
     }
 
-    @PostMapping("/verify")
+    @GetMapping("/verify/{reference_id}")
     public ResponseEntity<TransactionVerificationResponse>
-    verifyTransaction(@RequestBody TransactionVerificationRequest verificationRequest) {
-        return transactionService.verifyTransaction(verificationRequest);
+    verifyTransaction(@PathVariable(name = "reference_id") String referenceId) {
+        return transactionService.verifyTransaction(referenceId);
     }
+
+
 }

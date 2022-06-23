@@ -1,5 +1,6 @@
 package com.harbinton.paymentservice.models;
 
+import com.harbinton.paymentservice.enums.TransactionStatus;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,15 +18,26 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String email;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private CoperateAccount coperateAccount;
+
+    @ManyToOne
+    private IndividualAccount individualAccount;
+
     private BigDecimal amount;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 
     @Column(unique = true)
     private String reference;
 
 
     @CreationTimestamp
-    private LocalDateTime timeStamp;
+    private LocalDateTime initiatedDateTime;
+
+    private LocalDateTime finalizedDateTime;
 
 }
